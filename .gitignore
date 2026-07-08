@@ -1,0 +1,36 @@
+# --- ARCHIVOS DE SISTEMA ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+
+# --- FLUTTER Y DART ---
+# Ignorar carpetas de compilación (son muy pesadas)
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.packages
+**/generated/
+
+# --- FIREBASE Y SEGURIDAD ---
+# Archivos de depuración y configuración sensible
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+**/.env
+**/google-services.json
+**/GoogleService-Info.plist
+
+# --- PYTHON / NOTEBOOKS (Si los usas para análisis de datos) ---
+**/venv/
+**/__pycache__/
+*.ipynb_checkpoints
+
+# --- OTROS ---
+# Archivos temporales de editores
+.vscode/
+.idea/
+*.iml
