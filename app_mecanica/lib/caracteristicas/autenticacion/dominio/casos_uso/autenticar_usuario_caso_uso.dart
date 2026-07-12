@@ -57,8 +57,19 @@ class ActualizarPerfilCasoUso {
 
   Future<Either<Falla, void>> execute({
     required String uid,
-    required String nombre,
+    String? nombre,
+    bool? sonidoActivado,
+    int? nivel,
+    int? puntos,
+    int? puntosVida,
   }) {
-    return repositorio.actualizarPerfil(uid: uid, nombre: nombre);
+    return repositorio.actualizarPerfil(
+      uid: uid, 
+      nombre: nombre, 
+      sonidoActivado: sonidoActivado,
+      nivel: nivel,
+      puntos: puntos,
+      puntosVida: puntosVida,
+    );
   }
 }

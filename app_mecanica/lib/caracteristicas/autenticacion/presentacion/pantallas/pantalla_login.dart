@@ -47,7 +47,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
             if (state is AuthExitoso) {
               final ruta = state.usuario.rol == RolUsuario.docente
                   ? RutasApp.docentePreguntas
-                  : RutasApp.desafio;
+                  : RutasApp.principalEstudiante;
               Navigator.of(context).pushReplacementNamed(ruta);
             } else if (state is AuthFallido) {
               ScaffoldMessenger.of(context)
@@ -56,44 +56,85 @@ class _PantallaLoginState extends State<PantallaLogin> {
           },
           builder: (context, state) {
             final cargando = state is AuthCargando;
-            return Padding(
-              padding: const EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextFormField(
-                      controller: _correoController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(labelText: 'Correo electrónico'),
-                      validator: (v) =>
-                          (v == null || !v.contains('@')) ? 'Correo inválido' : null,
+            return Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _contrasenaController,
-                      obscureText: true,
-                      decoration: const InputDecoration(labelText: 'Contraseña'),
-                      validator: (v) =>
-                          (v == null || v.length < 6) ? 'Mínimo 6 caracteres' : null,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Bienvenido',
+                              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            TextFormField(
+                              controller: _correoController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                labelText: 'Correo electrónico',
+                                prefixIcon: const Icon(Icons.email),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                              validator: (v) =>
+                                  (v == null || !v.contains('@')) ? 'Correo inválido' : null,
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _contrasenaController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                labelText: 'Contraseña',
+                                prefixIcon: const Icon(Icons.lock),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                              validator: (v) =>
+                                  (v == null || v.length < 6) ? 'Mínimo 6 caracteres' : null,
+                            ),
+                            const SizedBox(height: 24),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: cargando ? null : _iniciarSesion,
+                                child: cargando
+                                    ? const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                      )
+                                    : const Text(
+                                        'Ingresar',
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pushNamed(RutasApp.registro),
+                              child: const Text('¿No tienes cuenta? Regístrate'),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: cargando ? null : _iniciarSesion,
-                      child: cargando
-                          ? const SizedBox(
-                              height: 18,
-                              width: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Ingresar'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pushNamed(RutasApp.registro),
-                      child: const Text('¿No tienes cuenta? Regístrate', style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             );

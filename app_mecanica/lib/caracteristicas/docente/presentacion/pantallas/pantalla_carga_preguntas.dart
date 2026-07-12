@@ -217,24 +217,34 @@ class _PantallaCargaPreguntasState extends State<PantallaCargaPreguntas> {
                 child: Text('Aún no hay preguntas registradas.'));
           }
 
-          return ListView.builder(
-            itemCount: preguntas.length,
-            itemBuilder: (context, indice) {
-              final pregunta = preguntas[indice];
-              return ListTile(
-                title: Text(pregunta.enunciado),
-                subtitle:
-                    Text('${pregunta.tema} · ${pregunta.dificultad.name}'),
-                onTap: () =>
-                    _abrirFormulario(context, preguntaExistente: pregunta),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  onPressed: () => context
-                      .read<PreguntasBloc>()
-                      .add(PreguntaEliminada(pregunta.id)),
-                ),
+          final preguntasPorTema = <String, List<Pregunta>>{};
+          for (final pregunta in preguntas) {
+            preguntasPorTema.putIfAbsent(pregunta.tema, () => []).add(pregunta);
+          }
+
+          return ListView(
+            children: preguntasPorTema.entries.map((entrada) {
+              final tema = entrada.key;
+              final preguntasDelTema = entrada.value;
+              return ExpansionTile(
+                title: Text(tema),
+                subtitle: Text('${preguntasDelTema.length} preguntas'),
+                leading: const Icon(Icons.folder),
+                children: preguntasDelTema.map((pregunta) {
+                  return ListTile(
+                    title: Text(pregunta.enunciado),
+                    subtitle: Text('Nivel: ${pregunta.dificultad.name}'),
+                    onTap: () => _abrirFormulario(context, preguntaExistente: pregunta),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () => context
+                          .read<PreguntasBloc>()
+                          .add(PreguntaEliminada(pregunta.id)),
+                    ),
+                  );
+                }).toList(),
               );
-            },
+            }).toList(),
           );
         },
       ),

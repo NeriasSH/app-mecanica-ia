@@ -75,16 +75,25 @@ class DocenteRepositorioImpl implements DocenteRepositorio {
 
       for (final e in estudiantes) {
         final progreso = (e['progreso'] as Map<String, dynamic>?) ?? {};
-        final nivel = progreso['nivelActual'] as String? ?? 'media';
-        final puntos = progreso['puntosTotales'] as int? ?? 0;
+        final nivelComprension = progreso['nivelActual'] as String? ?? 'media';
+        
+        // Puntos totales desde progreso si existen, o desde el root de gamificación
+        final puntosProgreso = progreso['puntosTotales'] as int? ?? 0;
+        final puntosRoot = e['puntos'] as int? ?? 0;
+        final puntos = puntosRoot > 0 ? puntosRoot : puntosProgreso;
+        
+        final nivelJuego = e['nivel'] as int? ?? 1;
+        final puntosVida = e['puntosVida'] as int? ?? 3;
 
-        distribucion[nivel] = (distribucion[nivel] ?? 0) + 1;
+        distribucion[nivelComprension] = (distribucion[nivelComprension] ?? 0) + 1;
 
         detalle.add(EstadisticaEstudiante(
           uidEstudiante: e['uid'] as String,
           nombreEstudiante: e['nombre'] as String? ?? e['uid'] as String,
-          nivelComprensionActual: nivel,
+          nivelComprensionActual: nivelComprension,
           puntosTotales: puntos,
+          nivelJuego: nivelJuego,
+          puntosVida: puntosVida,
         ));
       }
 

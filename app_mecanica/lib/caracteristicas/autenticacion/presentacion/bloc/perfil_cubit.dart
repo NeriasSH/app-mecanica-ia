@@ -54,10 +54,20 @@ class PerfilCubit extends Cubit<PerfilEstado> {
     );
   }
 
-  Future<void> actualizarNombre(String nuevoNombre) async {
+  Future<void> actualizarPerfil({
+    String? nuevoNombre, 
+    bool? sonidoActivado,
+    int? nivel,
+    int? puntos,
+    int? puntosVida,
+  }) async {
     final resultado = await actualizarPerfilCasoUso.execute(
       uid: uid,
       nombre: nuevoNombre,
+      sonidoActivado: sonidoActivado,
+      nivel: nivel,
+      puntos: puntos,
+      puntosVida: puntosVida,
     );
     resultado.fold(
       (falla) => emit(PerfilFallido(falla.mensaje)),

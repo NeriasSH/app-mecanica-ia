@@ -72,10 +72,21 @@ class AuthRepositorioImpl implements AuthRepositorio {
   @override
   Future<Either<Falla, void>> actualizarPerfil({
     required String uid,
-    required String nombre,
+    String? nombre,
+    bool? sonidoActivado,
+    int? nivel,
+    int? puntos,
+    int? puntosVida,
   }) async {
     try {
-      await fuenteDatosRemota.actualizarPerfil(uid: uid, nombre: nombre);
+      await fuenteDatosRemota.actualizarPerfil(
+        uid: uid, 
+        nombre: nombre, 
+        sonidoActivado: sonidoActivado,
+        nivel: nivel,
+        puntos: puntos,
+        puntosVida: puntosVida,
+      );
       return const Right(null);
     } on TimeoutException catch (_) {
       return const Left(TiempoAgotadoFalla());

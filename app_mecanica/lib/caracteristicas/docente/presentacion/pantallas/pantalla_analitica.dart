@@ -71,9 +71,23 @@ class _PantallaAnaliticaState extends State<PantallaAnalitica> {
                 ...resumen.detallePorEstudiante.map(
                   (e) => Card(
                     child: ListTile(
-                      title: Text(e.nombreEstudiante),
-                      subtitle: Text('Nivel de comprensión: ${e.nivelComprensionActual}'),
-                      trailing: Text('${e.puntosTotales} pts'),
+                      title: Text('${e.nombreEstudiante} (Nvl ${e.nivelJuego})'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Nivel de comprensión: ${e.nivelComprensionActual}'),
+                          Row(
+                            children: List.generate(3, (index) {
+                              return Icon(
+                                index < e.puntosVida ? Icons.favorite : Icons.favorite_border,
+                                color: Colors.redAccent,
+                                size: 14,
+                              );
+                            }),
+                          )
+                        ],
+                      ),
+                      trailing: Text('${e.puntosTotales} pts\n${e.puntosVida}/3 Vidas', textAlign: TextAlign.right),
                     ),
                   ),
                 ),

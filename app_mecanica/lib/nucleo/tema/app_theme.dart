@@ -30,13 +30,13 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: Colors.transparent, // Transparente para el fondo galáctico
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent, // Que deje ver el gradiente
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: const TextStyle(
-          fontSize: 22,
+        titleTextStyle: TextStyle(
+          fontSize: 26, // Aumentado
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
           color: Colors.white,
@@ -48,12 +48,12 @@ class AppTheme {
           foregroundColor: Colors.white, // Texto en blanco brillante
           minimumSize: const Size.fromHeight(56), // Botones un poco más grandes
           elevation: 8,
-          shadowColor: colorScheme.primary.withOpacity(0.5),
+          shadowColor: colorScheme.primary.withValues(alpha: 0.8), // Más brillo
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30), // Más redondeado, estilo cápsula
           ),
           textStyle: const TextStyle(
-            fontSize: 18,
+            fontSize: 20, // Aumentado
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
           ),
@@ -68,7 +68,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(30),
           ),
           textStyle: const TextStyle(
-            fontSize: 16,
+            fontSize: 18, // Aumentado
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -76,32 +76,34 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: colorScheme.secondary.withOpacity(0.5)),
+          borderSide: BorderSide(color: colorScheme.secondary.withValues(alpha: 0.5)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: colorScheme.secondary.withOpacity(0.3)),
+          borderSide: BorderSide(color: colorScheme.secondary.withValues(alpha: 0.3)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: colorScheme.secondary, width: 2),
         ),
         filled: true,
-        fillColor: Colors.black.withOpacity(0.3), // Fondo semitransparente para inputs
+        fillColor: Colors.black.withValues(alpha: 0.3), // Fondo semitransparente para inputs
         labelStyle: const TextStyle(color: Colors.white70),
       ),
       cardTheme: CardThemeData(
-        color: Colors.black.withOpacity(0.4), // Card translúcida
+        color: Colors.black.withValues(alpha: 0.4), // Card translúcida
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: colorScheme.secondary.withOpacity(0.2), width: 1),
+          side: BorderSide(color: colorScheme.secondary.withValues(alpha: 0.4), width: 1.5),
         ),
       ),
       textTheme: const TextTheme(
-        titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        labelLarge: TextStyle(color: Colors.white70),
-        headlineSmall: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
+        titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24),
+        labelLarge: TextStyle(color: Colors.white70, fontSize: 18),
+        headlineSmall: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 28),
+        bodyLarge: TextStyle(color: Colors.white, fontSize: 18),
+        bodyMedium: TextStyle(color: Colors.white70, fontSize: 16),
       ),
     );
   }

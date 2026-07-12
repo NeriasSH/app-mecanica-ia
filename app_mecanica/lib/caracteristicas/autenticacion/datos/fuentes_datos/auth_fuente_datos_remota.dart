@@ -54,6 +54,10 @@ class AuthFuenteDatosRemota {
       'nombre': nombre,
       'correo': correo,
       'rol': rol,
+      'nivel': 1,
+      'puntos': 0,
+      'puntosVida': 3,
+      'sonidoActivado': true,
       'fechaRegistro': FieldValue.serverTimestamp(),
     };
 
@@ -81,14 +85,27 @@ class AuthFuenteDatosRemota {
     return UsuarioModelo.fromFirestore(uid, doc.data()!);
   }
 
-  /// CUS-03, paso 5: persiste los cambios del perfil.
   Future<void> actualizarPerfil({
     required String uid,
-    required String nombre,
+    String? nombre,
+    bool? sonidoActivado,
+    int? nivel,
+    int? puntos,
+    int? puntosVida,
   }) async {
-    await _firestore
-        .collection('usuarios')
-        .doc(uid)
-        .update({'nombre': nombre}).timeout(_tiempoLimite);
+    final Map<String, dynamic> data = {};
+    if (nombre != null) data['nombre'] = nombre;
+    if (sonidoActivado != null) data['sonidoActivado'] = sonidoActivado;
+    if (nivel != null) data['nivel'] = nivel;
+    if (puntos != null) data['puntos'] = puntos;
+    if (puntosVida != null) data['puntosVida'] = puntosVida;
+    
+    if (data.isNotEmpty) {
+      await _firestore
+          .collection('usuarios')
+          .doc(uid)
+          .update(data)
+          .timeout(_tiempoLimite);
+    }
   }
 }

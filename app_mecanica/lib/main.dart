@@ -14,6 +14,7 @@ import 'caracteristicas/autenticacion/presentacion/bloc/perfil_cubit.dart';
 import 'caracteristicas/autenticacion/presentacion/pantallas/pantalla_perfil.dart';
 
 import 'caracteristicas/aprendizaje/presentacion/pantallas/pantalla_desafio.dart';
+import 'caracteristicas/estudiante/presentacion/pantallas/pantalla_principal_estudiante.dart';
 
 import 'caracteristicas/ranking/presentacion/bloc/ranking_cubit.dart';
 import 'caracteristicas/ranking/presentacion/pantallas/pantalla_ranking.dart';
@@ -62,6 +63,32 @@ class MiApp extends StatelessWidget {
               // completó CUS-02 Autenticar Usuario). Si por algún error
               // se navega aquí sin sesión activa, se redirige a Login
               // en vez de fallar.
+              // Hub principal para el estudiante
+              RutasApp.principalEstudiante: (context) {
+                final estadoAuth = context.watch<AuthBloc>().state;
+                if (estadoAuth is! AuthExitoso) {
+                  return const PantallaLogin();
+                }
+                final uidActual = estadoAuth.usuario.uid;
+
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (_) => InyeccionDependencias.crearLearningBloc(uidActual),
+                    ),
+                    BlocProvider<PerfilCubit>(
+                      create: (_) => InyeccionDependencias.crearPerfilCubit(uidActual),
+                    ),
+                    BlocProvider<RankingCubit>(
+                      create: (_) => InyeccionDependencias.crearRankingCubit(),
+                    ),
+                  ],
+                  child: const PantallaPrincipalEstudiante(),
+                );
+              },
+
+              // Las rutas sueltas se pueden mantener para casos directos o eliminarse,
+              // las mantenemos para no romper referencias internas de Navigator.pushNamed
               RutasApp.desafio: (context) {
                 final estadoAuth = context.watch<AuthBloc>().state;
                 if (estadoAuth is! AuthExitoso) {

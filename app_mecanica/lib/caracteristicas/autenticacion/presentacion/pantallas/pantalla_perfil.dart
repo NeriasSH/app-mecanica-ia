@@ -3,9 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/perfil_cubit.dart';
 import '../../../../nucleo/widgets/boton_cerrar_sesion.dart';
 import '../../../../nucleo/utilidades/validadores.dart';
-import '../../../../nucleo/constantes/rutas_app.dart';
-import '../../dominio/entidades/usuario.dart';
-import '../../../../nucleo/widgets/galaxy_background.dart';
 
 /// CUS-03, Gestionar Perfil.
 class PantallaPerfil extends StatefulWidget {
@@ -33,9 +30,9 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
 
   @override
   Widget build(BuildContext context) {
-    return GalaxyBackground(
-      child: Scaffold(
-        appBar: AppBar(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
           title: const Text('Mi perfil'),
           actions: const [BotonCerrarSesion()],
         ),
@@ -87,31 +84,35 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                     decoration: const InputDecoration(labelText: 'Nombre'),
                     validator: Validadores.requerido,
                   ),
+                  const SizedBox(height: 16),
+                  SwitchListTile(
+                    title: const Text('Efectos de sonido'),
+                    subtitle: const Text('Reproducir sonidos al jugar'),
+                    value: usuario.sonidoActivado,
+                    onChanged: (valor) {
+                      context.read<PerfilCubit>().actualizarPerfil(
+                            nuevoNombre: usuario.nombre,
+                            sonidoActivado: valor,
+                          );
+                    },
+                  ),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         context
                             .read<PerfilCubit>()
-                            .actualizarNombre(_nombreController.text.trim());
+                            .actualizarPerfil(nuevoNombre: _nombreController.text.trim());
                       }
                     },
                     child: const Text('Guardar cambios'),
                   ),
-                  const SizedBox(height: 12),
-                  if (usuario.rol == RolUsuario.estudiante)
-                    OutlinedButton(
-                      onPressed: () => Navigator.of(context)
-                          .pushReplacementNamed(RutasApp.desafio),
-                      child: const Text('Continuar al desafío'),
-                    ),
                 ],
               ),
             ),
           );
         },
       ),
-    ),
     );
   }
 }

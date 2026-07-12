@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../datos/fuentes_datos/teoria_fuente_datos_local.dart';
 import '../../dominio/casos_uso/obtener_temas_teoria_caso_uso.dart';
 import '../../../../nucleo/widgets/boton_cerrar_sesion.dart';
-import '../../../../nucleo/widgets/galaxy_background.dart';
 
 /// CUS-10, Consultar Teoría.
 /// También se activa automáticamente desde CUS-07 cuando el
@@ -18,8 +17,8 @@ class PantallaTeoria extends StatelessWidget {
     const casoUso = ObtenerTemasTeoriaCasoUso(TeoriaFuenteDatosLocal());
     final temas = casoUso.execute();
 
-    return GalaxyBackground(
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('Teoría: Mecánica Newtoniana'),
         actions: const [BotonCerrarSesion()],
@@ -52,7 +51,6 @@ class PantallaTeoria extends StatelessWidget {
             ),
           );
         },
-      ),
       ),
     );
   }

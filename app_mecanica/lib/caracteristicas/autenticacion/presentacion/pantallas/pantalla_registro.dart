@@ -57,7 +57,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
             // su nombre/avatar antes de entrar al primer desafío.
             final ruta = state.usuario.rol == RolUsuario.docente
                 ? RutasApp.docentePreguntas
-                : RutasApp.perfil;
+                : RutasApp.principalEstudiante;
             Navigator.of(context).pushReplacementNamed(ruta);
           } else if (state is AuthFallido) {
             ScaffoldMessenger.of(context)
@@ -66,55 +66,103 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         },
         builder: (context, state) {
           final cargando = state is AuthCargando;
-          return Padding(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextFormField(
-                    controller: _nombreController,
-                    decoration: const InputDecoration(labelText: 'Nombre'),
-                    validator: Validadores.requerido,
+          return Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Card(
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _correoController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration:
-                        const InputDecoration(labelText: 'Correo electrónico'),
-                    validator: Validadores.correo,
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Únete a la Aventura',
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          TextFormField(
+                            controller: _nombreController,
+                            decoration: InputDecoration(
+                              labelText: 'Nombre',
+                              prefixIcon: const Icon(Icons.person),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            validator: Validadores.requerido,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _correoController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              labelText: 'Correo electrónico',
+                              prefixIcon: const Icon(Icons.email),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            validator: Validadores.correo,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _contrasenaController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              labelText: 'Contraseña',
+                              prefixIcon: const Icon(Icons.lock),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            validator: Validadores.contrasena,
+                          ),
+                          const SizedBox(height: 16),
+                          DropdownButtonFormField<RolUsuario>(
+                            initialValue: _rolSeleccionado,
+                            decoration: InputDecoration(
+                              labelText: 'Rol',
+                              prefixIcon: const Icon(Icons.badge),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            items: RolUsuario.values
+                                .map((r) => DropdownMenuItem(
+                                    value: r,
+                                    child: Text(r.name.substring(0, 1).toUpperCase() + r.name.substring(1))))
+                                .toList(),
+                            onChanged: (v) => setState(() => _rolSeleccionado = v!),
+                          ),
+                          const SizedBox(height: 24),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: cargando ? null : _registrar,
+                              child: cargando
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    )
+                                  : const Text(
+                                      'Crear cuenta',
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _contrasenaController,
-                    obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Contraseña'),
-                    validator: Validadores.contrasena,
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<RolUsuario>(
-                    initialValue: _rolSeleccionado,
-                    decoration: const InputDecoration(labelText: 'Rol'),
-                    items: RolUsuario.values
-                        .map((r) =>
-                            DropdownMenuItem(value: r, child: Text(r.name)))
-                        .toList(),
-                    onChanged: (v) => setState(() => _rolSeleccionado = v!),
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: cargando ? null : _registrar,
-                    child: cargando
-                        ? const SizedBox(
-                            height: 18,
-                            width: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Crear cuenta'),
-                  ),
-                ],
+                ),
               ),
             ),
           );

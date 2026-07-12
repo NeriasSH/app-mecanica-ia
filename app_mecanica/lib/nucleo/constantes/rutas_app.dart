@@ -7,6 +7,7 @@ class RutasApp {
   static const perfil = '/perfil';
   static const ranking = '/ranking';
   static const teoria = '/teoria';
+  static const principalEstudiante = '/estudiante';
   static const docentePreguntas = '/docente/preguntas';
   static const docenteAnalitica = '/docente/analitica';
 }

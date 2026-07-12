@@ -6,7 +6,8 @@ import '../bloc/learning_evento.dart';
 import '../bloc/learning_estado.dart';
 import '../../../../nucleo/widgets/boton_cerrar_sesion.dart';
 import '../../../../nucleo/constantes/rutas_app.dart';
-import '../../../../nucleo/widgets/galaxy_background.dart';
+import '../../../../nucleo/utilidades/servicio_audio.dart';
+import '../../../autenticacion/presentacion/bloc/perfil_cubit.dart';
 
 class PantallaDesafio extends StatefulWidget {
   final String tema;
@@ -52,9 +53,9 @@ class _PantallaDesafioState extends State<PantallaDesafio> {
 
   @override
   Widget build(BuildContext context) {
-    return GalaxyBackground(
-      child: Scaffold(
-        appBar: AppBar(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
           title: Text('Desafío: ${widget.tema}'),
           actions: const [BotonCerrarSesion()],
         ),
@@ -64,14 +65,56 @@ class _PantallaDesafioState extends State<PantallaDesafio> {
               if (state.intentosPreguntaActual == 0) {
                 _inicioPregunta = DateTime.now();
               } else if (state.intentosPreguntaActual > 0) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('¡Inténtalo de nuevo, astronauta!'),
-                    backgroundColor: Colors.deepOrangeAccent,
-                    duration: Duration(seconds: 2),
-                  ),
-                );
+                // Se equivocó
+                final perfilCubit = context.read<PerfilCubit>();
+                if (perfilCubit.state is PerfilCargado || perfilCubit.state is PerfilActualizado) {
+                  final usuario = perfilCubit.state is PerfilCargado 
+                      ? (perfilCubit.state as PerfilCargado).usuario 
+                      : (perfilCubit.state as PerfilActualizado).usuario;
+                  
+                  if (usuario.sonidoActivado) ServicioAudio().reproducirPerderVida();
+
+                  final nuevasVidas = (usuario.puntosVida - 1).clamp(0, 3);
+                  perfilCubit.actualizarPerfil(puntosVida: nuevasVidas);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.favorite_border, color: Colors.white),
+                          const SizedBox(width: 8),
+                          Text(nuevasVidas == 0 ? '¡Te quedaste sin vidas!' : '¡Inténtalo de nuevo! -1 vida'),
+                        ],
+                      ),
+                      backgroundColor: Colors.deepOrangeAccent,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
               }
+            } else if (state is RetroalimentacionMostrada) {
+               // Respondió correctamente, subió a RetroalimentacionMostrada
+                final perfilCubit = context.read<PerfilCubit>();
+                if (perfilCubit.state is PerfilCargado || perfilCubit.state is PerfilActualizado) {
+                  final usuario = perfilCubit.state is PerfilCargado 
+                      ? (perfilCubit.state as PerfilCargado).usuario 
+                      : (perfilCubit.state as PerfilActualizado).usuario;
+
+                  if (usuario.sonidoActivado) ServicioAudio().reproducirPuntos();
+                  
+                  final nuevosPuntos = usuario.puntos + 10;
+                  int nuevoNivel = usuario.nivel;
+                  
+                  if (nuevosPuntos >= usuario.nivel * 100) {
+                     nuevoNivel++;
+                     if (usuario.sonidoActivado) ServicioAudio().reproducirSubirNivel();
+                     ScaffoldMessenger.of(context).showSnackBar(
+                       SnackBar(content: Text('¡Felicidades! Subiste al Nivel $nuevoNivel'), backgroundColor: Colors.green),
+                     );
+                  }
+
+                  perfilCubit.actualizarPerfil(puntos: nuevosPuntos, nivel: nuevoNivel);
+                }
             }
           },
         builder: (context, state) {
@@ -139,15 +182,27 @@ class _PantallaDesafioState extends State<PantallaDesafio> {
                 Text(pregunta.enunciado, style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 24),
                 ...List.generate(pregunta.alternativas.length, (indice) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: OutlinedButton(
-                      onPressed: () => _responder(estadoCargado, indice),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(pregunta.alternativas[indice]),
-                      ),
-                    ),
+                  return TweenAnimationBuilder<double>(
+                    duration: Duration(milliseconds: 400 + (indice * 100)),
+                    tween: Tween<double>(begin: 0, end: 1),
+                    builder: (context, value, child) {
+                      return Transform.translate(
+                        offset: Offset(0, 50 * (1 - value)),
+                        child: Opacity(
+                          opacity: value,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: OutlinedButton(
+                              onPressed: () => _responder(estadoCargado, indice),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(pregunta.alternativas[indice]),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   );
                 }),
               ],
@@ -155,7 +210,6 @@ class _PantallaDesafioState extends State<PantallaDesafio> {
           );
         },
       ),
-    ),
     );
   }
 }

@@ -7,12 +7,16 @@ class EstadisticaEstudiante {
   final String nombreEstudiante;
   final String nivelComprensionActual; // 'alta' | 'media' | 'baja'
   final int puntosTotales;
+  final int nivelJuego;
+  final int puntosVida;
 
   const EstadisticaEstudiante({
     required this.uidEstudiante,
     required this.nombreEstudiante,
     required this.nivelComprensionActual,
     required this.puntosTotales,
+    this.nivelJuego = 1,
+    this.puntosVida = 3,
   });
 }
 

@@ -22,6 +22,10 @@ abstract class AuthRepositorio {
 
   Future<Either<Falla, void>> actualizarPerfil({
     required String uid,
-    required String nombre,
+    String? nombre,
+    bool? sonidoActivado,
+    int? nivel,
+    int? puntos,
+    int? puntosVida,
   });
 }
